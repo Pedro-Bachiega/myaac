@@ -151,8 +151,9 @@ class CreateCharacter
 		$player->setManaSpent($char_to_copy->getManaSpent());
 		$player->setSoul($char_to_copy->getSoul());
 
-		for($skill = POT::SKILL_FIRST; $skill <= POT::SKILL_LAST; $skill++)
-			$player->setSkill($skill, 10);
+		for($skill = POT::SKILL_FIRST; $skill <= POT::SKILL_LAST; $skill++) {
+			$player->setSkill($skill, $char_to_copy->getSkill($skill));
+		}
 
 		$player->setLookBody($char_to_copy->getLookBody());
 		$player->setLookFeet($char_to_copy->getLookFeet());

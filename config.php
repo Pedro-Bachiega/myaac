@@ -31,8 +31,8 @@ $config = array(
 	 */
 	'env' => 'prod', // 'prod' for production and 'dev' for development
 
-	'template' => 'kathrine', // template used by website (kathrine, tibiacom)
-	'template_allow_change' => true, // allow users to choose their own template while browsing website?
+	'template' => 'tibiacom', // template used by website (kathrine, tibiacom)
+	'template_allow_change' => false, // allow users to choose their own template while browsing website?
 
 	'vocations_amount' => 4, // how much basic vocations your server got (without promotion)
 
@@ -91,20 +91,20 @@ $config = array(
 
 	// account
 	'account_management' => true, // disable if you're using other method to manage users (fe. tfs account manager)
-	'account_create_auto_login' => false, // auto login after creating account?
+	'account_create_auto_login' => true, // auto login after creating account?
 	'account_create_character_create' => true, // allow directly to create character on create account page?
 	'account_mail_verify' => false, // force users to confirm their email addresses when registering account
 	'account_mail_unique' => true, // email addresses cannot be duplicated? (one account = one email)
-	'account_premium_days' => 0, // default premium days on new account
-	'account_premium_points' => 0, // default premium points on new account
-	'account_welcome_mail' => true, // send welcome email when user registers
+	'account_premium_days' => 360, // default premium days on new account
+	'account_premium_points' => 1000, // default premium points on new account
+	'account_welcome_mail' => false, // send welcome email when user registers
 	'account_mail_change' => 2, // how many days user need to change email to account - block hackers
 	'account_country' => true, // user will be able to set country of origin when registering account, this information will be viewable in others places aswell
 	'account_country_recognize' => true, // should country of user be automatically recognized by his IP? This makes an external API call to http://ipinfo.io
-	'account_change_character_name' => false, // can user change their character name for premium points?
-	'account_change_character_name_points' => 30, // cost of name change
-	'account_change_character_sex' => false, // can user change their character sex for premium points?
-	'account_change_character_sex_points' => 30, // cost of sex change
+	'account_change_character_name' => true, // can user change their character name for premium points?
+	'account_change_character_name_points' => 150, // cost of name change
+	'account_change_character_sex' => true, // can user change their character sex for premium points?
+	'account_change_character_sex_points' => 150, // cost of sex change
 	'characters_per_account' => 10,	// max. number of characters per account
 
 	// mail
@@ -156,7 +156,7 @@ $config = array(
 
 	// town list used when creating character
 	// won't be displayed if there is only one item (rookgaard for example)
-	'character_towns' => array(1),
+	'character_towns' => array(8),
 
 	// characters length
 	// This is the minimum and the maximum length that a player can create a character. It is highly recommend the maximum length to be 21.
@@ -212,8 +212,8 @@ $config = array(
 	// characters page
 	'characters' => array( // what things to display on character view page (true/false in each option)
 		'level' => true,
-		'experience' => false,
-		'magic_level' => false,
+		'experience' => true,
+		'magic_level' => true,
 		'balance' => false,
 		'marriage_info' => true, // only 0.3
 		'outfit' => true,
