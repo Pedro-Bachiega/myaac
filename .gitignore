@@ -49,3 +49,4 @@ landing
 
 # others/rest
 system/pages/downloads.php
+system/php_sessions/*

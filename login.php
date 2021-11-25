@@ -54,33 +54,32 @@ switch ($action) {
 	break;
 	
 	case 'eventschedule':
-	$eventlist = [];
-	$file_path = config('server_path') . 'data/XML/events.xml';
-	if (!file_exists($file_path)) {
-		die(json_encode([]));
+		$eventlist = [];
+		$file_path = config('server_path') . 'data/XML/events.xml';
+		if (!file_exists($file_path)) {
+			die(json_encode([]));
+			break;
+		}
+		$xml = new DOMDocument;
+		$xml->load($file_path);
+		$tmplist = [];
+		$tableevent = $xml->getElementsByTagName('event');
+
+		foreach ($tableevent as $event) {
+			if ($event) { $tmplist = [
+			'colorlight' => parseEvent($event->getElementsByTagName('colors'), false, 'colorlight'),
+			'colordark' => parseEvent($event->getElementsByTagName('colors'), false, 'colordark'),
+			'description' => parseEvent($event->getElementsByTagName('description'), false, 'description'),
+			'displaypriority' => intval(parseEvent($event->getElementsByTagName('details'), false, 'displaypriority')),
+			'enddate' => intval(parseEvent($event, true, false)),
+			'isseasonal' => getBoolean(intval(parseEvent($event->getElementsByTagName('details'), false, 'isseasonal'))),
+			'name' => $event->getAttribute('name'),
+			'startdate' => intval(parseEvent($event, true, true)),
+			'specialevent' => intval(parseEvent($event->getElementsByTagName('details'), false, 'specialevent'))
+				];
+			$eventlist[] = $tmplist; } }
+		die(json_encode(['eventlist' => $eventlist, 'lastupdatetimestamp' => time()]));
 		break;
-	}
-	$xml = new DOMDocument;
-	$xml->load($file_path);
-	$tmplist = [];
-	$tableevent = $xml->getElementsByTagName('event');
-
-	foreach ($tableevent as $event) {
-		if ($event) { $tmplist = [
-		'colorlight' => parseEvent($event->getElementsByTagName('colors'), false, 'colorlight'),
-		'colordark' => parseEvent($event->getElementsByTagName('colors'), false, 'colordark'),
-		'description' => parseEvent($event->getElementsByTagName('description'), false, 'description'),
-		'displaypriority' => intval(parseEvent($event->getElementsByTagName('details'), false, 'displaypriority')),
-		'enddate' => intval(parseEvent($event, true, false)),
-		'isseasonal' => getBoolean(intval(parseEvent($event->getElementsByTagName('details'), false, 'isseasonal'))),
-		'name' => $event->getAttribute('name'),
-		'startdate' => intval(parseEvent($event, true, true)),
-		'specialevent' => intval(parseEvent($event->getElementsByTagName('details'), false, 'specialevent'))
-			];
-		$eventlist[] = $tmplist; } }
-	die(json_encode(['eventlist' => $eventlist, 'lastupdatetimestamp' => time()]));
-	break;
-
 	case 'boostedcreature':
 		$boostDB = $db->query("select * from " . $db->tableName('boosted_creature'))->fetchAll();
 		foreach ($boostDB as $Tableboost) {
@@ -89,10 +88,8 @@ switch ($action) {
 			'raceid' => intval($Tableboost['raceid'])
 		]));
 		}
-	break;
-
+		break;
 	case 'login':
-	
 		$port = $config['lua']['gameProtocolPort'];
 	
 		// default world info
@@ -140,16 +137,17 @@ switch ($action) {
 		$save = false;
 		$timeNow = time();
 		$query = $db->query("select `premdays`, `lastday` from `accounts` where `id` = " . $account->getId());
-			if($query->rowCount() > 0) {
-				$query = $query->fetch();
-				$premDays = (int)$query['premdays'];
-				$lastDay = (int)$query['lastday'];
-				$lastLogin = $lastDay;
-			}
-			else {
-				sendError("Error while fetching your account data. Please contact admin.");
+
+		if($query->rowCount() > 0) {
+			$query = $query->fetch();
+			$premDays = (int)$query['premdays'];
+			$lastDay = (int)$query['lastday'];
+			$lastLogin = $lastDay;
+		} else {
+			sendError("Error while fetching your account data. Please contact admin.");
 		}
-		if($premDays != 0 && $premDays != PHP_INT_MAX ) {
+
+		if($premDays != 0 && $premDays != PHP_INT_MAX) {
 			if($lastDay == 0) {
 				$lastDay = $timeNow;
 				$save = true;
@@ -172,9 +170,11 @@ switch ($action) {
 			$lastDay = 0;
 			$save = true;
 		}
+
 		if($save) {
 			$db->query("update `accounts` set `premdays` = " . $premDays . ", `lastday` = " . $lastDay . " where `id` = " . $account->getId());
 		}
+
 		$premiumAccount = $premDays > 0;
 		$timePremium = time() + ($premDays * 86400);
 
@@ -195,11 +195,10 @@ switch ($action) {
 			'emailcoderequest' => false
 		];
 		die(json_encode(compact('session', 'playdata')));
-	break;
-	
+		break;
 	default:
 		sendError("Unrecognized event {$action}.");
-	break;
+		break;
 }
 
 function create_char($player) {
