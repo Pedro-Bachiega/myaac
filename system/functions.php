@@ -451,7 +451,7 @@ function tickers()
  */
 function template_place_holder($type)
 {
-	global $template_place_holders;
+	global $twig, $template_place_holders;
 	$ret = '';
 
 	if(array_key_exists($type, $template_place_holders) && is_array($template_place_holders[$type]))
@@ -459,6 +459,9 @@ function template_place_holder($type)
 
 	if($type === 'head_start') {
 		$ret .= template_header();
+	}
+	elseif ($type === 'body_start') {
+		$ret .= $twig->render('browsehappy.html.twig');
 	}
 	elseif($type === 'body_end') {
 		$ret .= template_ga_code();
@@ -1039,7 +1042,7 @@ function getTopPlayers($limit = 5) {
 			$deleted = 'deletion';
 
 		$is_tfs10 = $db->hasTable('players_online');
-		$players = $db->query('SELECT `id`, `name`, `level`, `experience`, `looktype`' . ($db->hasColumn('players', 'lookaddons') ? ', `lookaddons`' : '') . ', `lookhead`, `lookbody`, `looklegs`, `lookfeet`' . ($is_tfs10 ? '' : ', `online`') . ' FROM `players` WHERE `group_id` < ' . config('highscores_groups_hidden') . ' AND `id` NOT IN (' . implode(', ', config('highscores_ids_hidden')) . ') AND `' . $deleted . '` = 0 AND `account_id` != 1 ORDER BY `experience` DESC LIMIT ' . (int)$limit)->fetchAll();
+		$players = $db->query('SELECT `id`, `name`, `level`, `vocation`, `experience`, `looktype`' . ($db->hasColumn('players', 'lookaddons') ? ', `lookaddons`' : '') . ', `lookhead`, `lookbody`, `looklegs`, `lookfeet`' . ($is_tfs10 ? '' : ', `online`') . ' FROM `players` WHERE `group_id` < ' . config('highscores_groups_hidden') . ' AND `id` NOT IN (' . implode(', ', config('highscores_ids_hidden')) . ') AND `' . $deleted . '` = 0 AND `account_id` != 1 ORDER BY `experience` DESC LIMIT ' . (int)$limit)->fetchAll();
 
 		if($is_tfs10) {
 			foreach($players as &$player) {
@@ -1243,4 +1246,4 @@ function getCustomPage($page, &$success)
 
 // validator functions
 require_once LIBS . 'validator.php';
-require_once SYSTEM . 'compat.php';
+require_once SYSTEM . 'compat/base.php';
